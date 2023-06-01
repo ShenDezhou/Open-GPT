@@ -69,6 +69,20 @@ $ torchrun --standalone --nproc_per_node=10 train_adam.py config/train_gpt2_smal
 
 Please adjust ```nproc_per_node```, ```batch_size```, and ```gradient_accumulation_steps``` accordingly if you use other hardware setup. Make sure their product equals 480.
 
+# 采样
+使用下述命令进行文本生成：
+
+使用脚本 sample.py 从 OpenAI 发布的预训练 GPT-2 模型或您自己训练的模型中进行采样。 例如，这是一种从最大的可用 gpt2-xl 模型中采样的方法：
+
+```
+$ python sample.py \
+    --init_from=gpt2-xl \
+    --start="What is the answer to life, the universe, and everything?" \
+    --num_samples=5 --max_new_tokens=100
+```
+If you'd like to sample from a model you trained, use the --out_dir to point the code appropriately. You can also prompt the model with some text from a file, e.g. $ python sample.py --start=FILE:prompt.txt.
+如果您想从您训练的模型中采样，请使用 --out_dir 适当地指向代码。 您还可以使用文件中的一些文本提示模型，例如 `$ python sample.py --start=FILE:prompt.txt`。
+
 
 # 引用
 
