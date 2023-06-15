@@ -47,6 +47,16 @@ python train.py --device=cuda --compile=True --dtype=float16 --eval_iters=1 --lo
 
 全部试验日志在[gpt_pretraining_on_gpt-tiny.ipynb](colab%2Fgpt_pretraining_on_gpt-tiny.ipynb)。
 
+# 训练可视化及思考
+
+从试验日志中提取Adam和Sophia的Loss，并用logs目录下的画图代码对比二者的损失对比，图像如下：
+
+![adam_sophia.png](logs%2Fadam_sophia.png)
+
+从图像可知在`x`(x实际代表了10*x步)取(50-200)时，Adam比Sophia在loss这个指标上要差一些。
+可以预计，在步数达到当前实验步数的10倍、100倍时，两者的Loss差距并不会很明显（从x=200看出）。
+但Sophia比Adam在训练开始时，loss下降更快，在训练预算有限的条件下，是有经济价值的。
+
 # 多机训练参考
 
 Start pre-training GPT2 Small (125M):
