@@ -43,6 +43,8 @@ init_from = 'scratch' # 'scratch' or 'resume' or 'gpt2*'
 wandb_log = False # disabled by default
 wandb_project = 'owt'
 wandb_run_name = 'gpt2' # 'run' + str(time.time())
+# tensorboard logging
+tensorboard = False
 # data
 dataset = 'web'
 gradient_accumulation_steps = 5 * 8 # used to simulate larger batch sizes
@@ -240,6 +242,9 @@ def get_lr(it):
 if wandb_log and master_process:
     import wandb
     wandb.init(project=wandb_project, name=wandb_run_name, config=config)
+if tensorboard and master_process:
+    from torch.utils.tensorboard import SummaryWriter
+    writer = SummaryWriter("loss_data")
 
 # training loop
 X, Y = get_batch('train') # fetch the very first batch
@@ -266,6 +271,11 @@ while True:
                 "lr": lr,
                 "mfu": running_mfu*100, # convert to percentage
             })
+        if tensorboard:
+            writer.add_scalar("train/loss", losses['train'], iter_num)
+            writer.add_scalar("val/loss", losses['val'], iter_num)
+            writer.add_scalar("lr", lr, iter_num)
+            writer.add_scalar("mfu", running_mfu*100, iter_num)
         if losses['val'] < best_val_loss or always_save_checkpoint:
             best_val_loss = losses['val']
             if iter_num > 0:
@@ -329,3 +339,7 @@ while True:
 
 if ddp:
     destroy_process_group()
+
+if tensorboard:
+    writer.flush()
+    writer.close()
