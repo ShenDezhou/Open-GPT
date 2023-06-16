@@ -13,7 +13,7 @@ num_proc = 8
 
 # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
 # dataset = load_dataset("openwebtext", cache_dir="/tiger/u/hliu99/nanoGPT/cache")
-dataset = load_dataset("text", data_files={"train": ["data/part-2021278643.txt"]})
+dataset = load_dataset("text", data_files={"train": ["data/part-2021278643.txt", "data/daodejing.txt"]})
 # dataset = load_dataset("text", data_dir="path/to/text/dataset")
 
 # owt by default only contains the 'train' split, so create a test split
