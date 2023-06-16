@@ -15,6 +15,8 @@
 ## GPT模型
 将模型名称改为pytorch_model.bin。
 
+模型参数量为6.84M，统计脚本[count_parameters.py](count_parameters.py)。
+
 ## 解码推理
 
 下面介绍如何使用该模型进行解码推理。
