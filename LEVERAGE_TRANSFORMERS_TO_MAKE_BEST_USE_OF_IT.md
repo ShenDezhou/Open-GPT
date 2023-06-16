@@ -318,6 +318,8 @@ for i, sample_output in enumerate(sample_outputs):
 
 本文的模型[gpt2-private](generation%2Fgpt2-private)，包含GPT2词表和配置文件，但缺少pytorch_model.bin，需要读者根据README.md自行训练）。
 
+本文的一个示例[text_generation_with_nano_gpt.ipynb](colab%2Ftext_generation_with_nano_gpt.ipynb)，可供读者参考。
+
 ## 后记
 
 模型训练固然重要，但如何高效解码是一个值得探讨的方向。本文利用了Transformers库中的GPT2模型的生成功能，向大家介绍了不同的采样算法的区别。
