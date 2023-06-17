@@ -9,13 +9,13 @@ class BPE_token(object):
     def __init__(self, vocab_size=50000):
         self.tokenizer = Tokenizer(BPE())
         self.tokenizer.normalizer = NFKC()
-        self.tokenizer.pre_tokenizer = Sequence([Whitespace(), UnicodeScripts(), ByteLevel()])
+        self.tokenizer.pre_tokenizer = Sequence([UnicodeScripts(), ByteLevel()])
         self.tokenizer.decoder = ByteLevelDecoder()
         self.vocab_size = vocab_size
 
     def bpe_train(self, paths):
 
-        trainer = BpeTrainer(vocab_size=self.vocab_size, show_progress=True, inital_alphabet=ByteLevel.alphabet(), special_tokens=[
+        trainer = BpeTrainer(vocab_size=self.vocab_size, show_progress=True, initial_alphabet=ByteLevel.alphabet(), special_tokens=[
             "<s>",
             "<pad>",
             "</s>",
