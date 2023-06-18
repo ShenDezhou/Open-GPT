@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # the folder 'text' contains all the files
     paths = [str(x) for x in Path("./data/").glob("**/*.txt")]
-    tokenizer = BPE_token()
+    tokenizer = BPE_token(vocab_size=50257)
     # train the tokenizer model
     tokenizer.bpe_train(paths)
     # saving the tokenized data in our specified folder
