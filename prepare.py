@@ -6,14 +6,14 @@ from tqdm import tqdm
 import numpy as np
 import tiktoken
 from datasets import load_dataset # huggingface datasets
-
+use_custom_tokenizer=True
 # number of workers in .map() call
 # good number to use is ~order number of cpu cores // 2
 num_proc = 8
 
 # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
 # dataset = load_dataset("openwebtext", cache_dir="/tiger/u/hliu99/nanoGPT/cache")
-dataset = load_dataset("text", data_files={"train": ["data/part-2021278643.txt", "data/daodejing.txt"]})
+dataset = load_dataset("text", data_files={"train": ["data/textall_logic_.txt"]})
 # dataset = load_dataset("text", data_dir="path/to/text/dataset")
 
 # owt by default only contains the 'train' split, so create a test split
@@ -33,11 +33,18 @@ split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
 #     })
 # })
 
-# we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
-enc = tiktoken.get_encoding("gpt2")
+if use_custom_tokenizer:
+    from transformers import GPT2Tokenizer
+    enc = GPT2Tokenizer.from_pretrained("./bpe_50k_cn")
+else:
+    # we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
+    enc = tiktoken.get_encoding("gpt2")
 def process(example):
-    ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
-    ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
+    if use_custom_tokenizer:
+        ids = enc.tokenize(example['text'])
+    else:
+        ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
+        ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
     # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
     out = {'ids': ids, 'len': len(ids)}
     return out
