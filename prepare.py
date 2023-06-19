@@ -13,7 +13,7 @@ num_proc = 8
 
 # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
 # dataset = load_dataset("openwebtext", cache_dir="/tiger/u/hliu99/nanoGPT/cache")
-dataset = load_dataset("text", data_files={"train": ["data/textall_logic_.txt"]})
+dataset = load_dataset("text", data_files={"train": ["data/textall_logic.txt"]})
 # dataset = load_dataset("text", data_dir="path/to/text/dataset")
 
 # owt by default only contains the 'train' split, so create a test split
@@ -41,7 +41,7 @@ else:
     enc = tiktoken.get_encoding("gpt2")
 def process(example):
     if use_custom_tokenizer:
-        ids = enc.tokenize(example['text'])
+        ids = enc.encode(example['text'])
     else:
         ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
         ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
