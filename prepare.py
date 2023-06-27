@@ -13,7 +13,7 @@ num_proc = 8
 
 # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
 # dataset = load_dataset("openwebtext", cache_dir="/tiger/u/hliu99/nanoGPT/cache")
-dataset = load_dataset("text", data_files={"train": ["data/textall_logic.txt"]})
+dataset = load_dataset("text", data_files={"train": ["data/shakespeare_input.txt"]})
 # dataset = load_dataset("text", data_dir="path/to/text/dataset")
 
 # owt by default only contains the 'train' split, so create a test split
@@ -34,8 +34,15 @@ split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
 # })
 
 if use_custom_tokenizer:
-    from transformers import GPT2Tokenizer
-    enc = GPT2Tokenizer.from_pretrained("./bpe_50k_cn")
+    from tiktoken.load import load_tiktoken_bpe
+    e1k = {
+        "name": "e1k_base",
+        "explicit_n_vocab": 1000,
+        "pat_str": r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
+        "mergeable_ranks": load_tiktoken_bpe("https://transformers-models.obs.cn-north-4.myhuaweicloud.com/gpt/tokenizer/e1k_base.ticktoken"),
+        "special_tokens": {},
+    }
+    enc = tiktoken.Encoding(**e1k)
 else:
     # we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
     enc = tiktoken.get_encoding("gpt2")
