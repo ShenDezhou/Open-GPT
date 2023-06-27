@@ -93,6 +93,19 @@ $ python sample.py \
 If you'd like to sample from a model you trained, use the --out_dir to point the code appropriately. You can also prompt the model with some text from a file, e.g. $ python sample.py --start=FILE:prompt.txt.
 如果您想从您训练的模型中采样，请使用 --out_dir 适当地指向代码。 您还可以使用文件中的一些文本提示模型，例如 `$ python sample.py --start=FILE:prompt.txt`。
 
+# 可读性训练
+
+为了展示本项目的训练、推理效果。
+基于莎士比亚戏剧文本1M[shakespeare_input.txt](raw_books%2Fshakespeare_input.txt)，训练了1K词表的分词器，
+并在训练时启用该1K词表进行数据处理、模型训练、模型推理。该开关为use_custom_tokenizer。
+
+完整的训练、推理教程在[gpt_pretraining_for_beginner_en.ipynb](colab%2Fgpt_pretraining_for_beginner_en.ipynb)。
+
+经过T4上10分钟的训练，约5000步，模型已具有戏剧编写能力，有小部分生成瑕疵，大部分生成有意义。
+
+分词器的训练及使用代码为[train_tiktoken.py](tokenizer%2Ftrain_tiktoken.py)和[use_tiktoken.py](tokenizer%2Fuse_tiktoken.py)。
+
+读者可自行训练其他文本的分词器。
 
 # 引用
 
