@@ -8,6 +8,7 @@ import torch
 import tiktoken
 from model import GPTConfig, GPT
 
+use_custom_tokenizer=True
 # -----------------------------------------------------------------------------
 init_from = 'resume' # either 'resume' (from an out_dir) or a gpt2 variant (e.g. 'gpt2-xl')
 out_dir = 'out' # ignored if init_from is not 'resume'
@@ -69,8 +70,21 @@ if load_meta:
 else:
     # ok let's assume gpt-2 encodings by default
     print("No meta.pkl found, assuming GPT-2 encodings...")
-    enc = tiktoken.get_encoding("gpt2")
-    encode = lambda s: enc.encode(s, allowed_special={"<|endoftext|>"})
+    if use_custom_tokenizer:
+        from tiktoken.load import load_tiktoken_bpe
+
+        e1k = {
+            "name": "e1k_base",
+            "explicit_n_vocab": 1001,
+            "pat_str": r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
+            "mergeable_ranks": load_tiktoken_bpe(
+                "https://transformers-models.obs.cn-north-4.myhuaweicloud.com/gpt/tokenizer/e1k_base.ticktoken"),
+            "special_tokens": {'<|endoftext|>':1000},
+        }
+        enc = tiktoken.Encoding(**e1k)
+    else:
+        enc = tiktoken.get_encoding("gpt2")
+    encode = lambda s: enc.encode(s, allowed_special='all')
     decode = lambda l: enc.decode(l)
 
 # encode the beginning of the prompt

@@ -17,7 +17,7 @@ dataset = load_dataset("text", data_files={"train": ["data/shakespeare_input.txt
 # dataset = load_dataset("text", data_dir="path/to/text/dataset")
 
 # owt by default only contains the 'train' split, so create a test split
-split_dataset = dataset["train"].train_test_split(test_size=0.0005, seed=2357, shuffle=True)
+split_dataset = dataset["train"].train_test_split(test_size=0.005, seed=2357, shuffle=True)
 split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
 
 # this results in:
@@ -37,21 +37,18 @@ if use_custom_tokenizer:
     from tiktoken.load import load_tiktoken_bpe
     e1k = {
         "name": "e1k_base",
-        "explicit_n_vocab": 1000,
+        "explicit_n_vocab": 1001,
         "pat_str": r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""",
         "mergeable_ranks": load_tiktoken_bpe("https://transformers-models.obs.cn-north-4.myhuaweicloud.com/gpt/tokenizer/e1k_base.ticktoken"),
-        "special_tokens": {},
+        "special_tokens": {'<|endoftext|>':1000},
     }
     enc = tiktoken.Encoding(**e1k)
 else:
     # we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
     enc = tiktoken.get_encoding("gpt2")
 def process(example):
-    if use_custom_tokenizer:
-        ids = enc.encode(example['text'])
-    else:
-        ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
-        ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
+    ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
+    ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
     # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
     out = {'ids': ids, 'len': len(ids)}
     return out
